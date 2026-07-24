@@ -65,6 +65,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 					<li class="nav-item"><a class="nav-link" href="books.php?type=research_paper">Research Papers</a></li>
 					<li class="nav-item"><a class="nav-link active" href="categories.php">Categories</a></li>
 					<li class="nav-item"><a class="nav-link" href="authors.php">Authors</a></li>
+					<li class="nav-item"><a class="nav-link" href="reference.php">Reference</a></li>
 					<li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
 					<li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
 				</ul>

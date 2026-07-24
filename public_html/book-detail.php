@@ -101,6 +101,7 @@ $has_preview = !empty($book['preview_file']);
 					<li class="nav-item"><a class="nav-link <?=($content_type == 'research_paper') ? 'active' : ''?>" href="books.php?type=research_paper">Research Papers</a></li>
 					<li class="nav-item"><a class="nav-link" href="categories.php">Categories</a></li>
 					<li class="nav-item"><a class="nav-link" href="authors.php">Authors</a></li>
+					<li class="nav-item"><a class="nav-link" href="reference.php">Reference</a></li>
 					<li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
 					<li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
 				</ul>
