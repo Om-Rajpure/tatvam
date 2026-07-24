@@ -200,7 +200,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
                     <a href="book-detail.php?id=<?=$book['id']?>" style="text-decoration:none;color:inherit;display:block;height:100%;">
                         <div class="book-card">
                             <div class="book-image">
-                                <img src="uploads/cover/<?=$book['cover']?>" alt="<?=$book['title']?>" onerror="this.src='https://via.placeholder.com/300x400?text=No+Cover'">
+                                <img src="uploads/cover/<?=$book['cover']?>" alt="<?=$book['title']?>" onerror="this.src='img/default-book.png'">
                                 <?php if ($book['price'] == 0) { ?>
                                 <div class="book-overlay">
                                     <span class="btn btn-light btn-sm"><i class="bi bi-eye"></i></span>
@@ -267,7 +267,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
                     <a href="book-detail.php?id=<?=$book['id']?>" style="text-decoration:none;color:inherit;display:block;height:100%;">
                         <div class="book-card">
                             <div class="book-image">
-                                <img src="uploads/cover/<?=$book['cover']?>" alt="<?=$book['title']?>" onerror="this.src='https://via.placeholder.com/300x400?text=No+Cover'">
+                                <img src="uploads/cover/<?=$book['cover']?>" alt="<?=$book['title']?>" onerror="this.src='img/default-book.png'">
                                 <?php if ($book['price'] == 0) { ?>
                                 <div class="book-overlay">
                                     <span class="btn btn-light btn-sm"><i class="bi bi-eye"></i></span>

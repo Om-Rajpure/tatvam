@@ -145,7 +145,7 @@ $has_preview = !empty($book['preview_file']);
                 <img src="uploads/cover/<?=htmlspecialchars($book['cover'])?>" 
                      alt="<?=htmlspecialchars($book['title'])?>" 
                      class="detail-cover img-fluid rounded shadow-sm"
-                     onerror="this.src='https://via.placeholder.com/400x550?text=No+Cover'">
+                     onerror="this.src='img/default-book.png'">
             </div>
 
             <!-- Right: Details -->

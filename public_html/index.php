@@ -196,7 +196,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 					<div class="col-6 col-md-4 col-lg-3">
 						<div class="book-card">
 							<div class="book-image">
-								<img src="uploads/cover/<?=$book['cover']?>" alt="<?=$book['title']?>" onerror="this.src='https://via.placeholder.com/300x400?text=No+Cover'">
+								<img src="uploads/cover/<?=$book['cover']?>" alt="<?=$book['title']?>" onerror="this.src='img/default-book.png'">
 								<?php if ($book['price'] == 0) { ?>
 								<div class="book-overlay">
 									<a href="uploads/files/<?=$book['file']?>" class="btn btn-light btn-sm" target="_blank"><i class="bi bi-eye"></i></a>

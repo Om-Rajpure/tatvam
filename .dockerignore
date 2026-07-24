@@ -1,0 +1,11 @@
+.git
+.gitignore
+.dockerignore
+.vscode
+.idea
+DO_NOT_UPLOAD_HERE
+*.md
+sql/
+.system_generated/
+scratch/
+*.log
