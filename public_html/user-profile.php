@@ -31,6 +31,8 @@ $stats = get_user_stats($conn, $_SESSION['user_id']);
             </a>
             <div class="ms-auto">
                 <a href="index.php" class="btn btn-outline-primary"><i class="bi bi-house"></i> Home</a>
+                <a href="books.php?type=research_paper" class="btn btn-outline-secondary ms-2"><i class="bi bi-journal-text"></i> Research Papers</a>
+                <a href="authors.php" class="btn btn-outline-secondary ms-2"><i class="bi bi-people"></i> Authors</a>
                 <a href="my-orders.php" class="btn btn-outline-secondary ms-2"><i class="bi bi-bag-check"></i> Orders</a>
                 <a href="submit-book.php" class="btn btn-success ms-2"><i class="bi bi-upload"></i> Publish Book</a>
                 <a href="php/user-logout.php" class="btn btn-outline-danger ms-2"><i class="bi bi-box-arrow-right"></i> Logout</a>

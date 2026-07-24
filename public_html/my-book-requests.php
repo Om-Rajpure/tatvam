@@ -28,6 +28,8 @@ $requests = get_user_requests($conn, $_SESSION['user_id']);
             </a>
             <div class="ms-auto">
                 <a href="index.php" class="btn btn-outline-primary me-2"><i class="bi bi-house"></i> Home</a>
+                <a href="books.php?type=research_paper" class="btn btn-outline-secondary me-2"><i class="bi bi-journal-text"></i> Research Papers</a>
+                <a href="authors.php" class="btn btn-outline-secondary me-2"><i class="bi bi-people"></i> Authors</a>
                 <a href="submit-book.php" class="btn btn-primary me-2"><i class="bi bi-plus-circle"></i> Submit New Book</a>
                 <a href="user-profile.php" class="btn btn-outline-secondary"><i class="bi bi-person"></i> Profile</a>
             </div>

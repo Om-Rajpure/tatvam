@@ -1,19 +1,18 @@
-<?php 
-// session_start();
-// include "db_conn.php";
-// include "php/func-book.php";
-// $books = get_all_books($conn);
-// include "php/func-author.php";
-// $authors = get_all_author($conn);
-// include "php/func-category.php";
-// $categories = get_all_categories($conn);
-// include "php/func-cart.php";
+<?php
+session_start();
+include "db_conn.php";
+include "php/func-book.php";
+$books = get_all_books($conn);
+include "php/func-author.php";
+$authors = get_all_author($conn);
+include "php/func-category.php";
+$categories = get_all_categories($conn);
+include "php/func-cart.php";
 
-// // Get cart count if user is logged in
-// $cart_count = 0;
-// if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') {
-// 	$cart_count = get_cart_count($conn, $_SESSION['user_id']);
-// }
+$cart_count = 0;
+if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') {
+    $cart_count = get_cart_count($conn, $_SESSION['user_id']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +67,9 @@
 				<ul class="navbar-nav mx-auto">
 					<li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
 					<li class="nav-item"><a class="nav-link" href="books.php">Books</a></li>
+					<li class="nav-item"><a class="nav-link" href="books.php?type=research_paper">Research Papers</a></li>
 					<li class="nav-item"><a class="nav-link" href="categories.php">Categories</a></li>
+					<li class="nav-item"><a class="nav-link" href="authors.php">Authors</a></li>
 					<li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
 					<li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
 					<?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') { ?>

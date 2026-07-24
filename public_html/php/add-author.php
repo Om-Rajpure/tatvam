@@ -1,59 +1,38 @@
-<?php  
+<?php
 session_start();
-
-# If the admin is logged in
-if (isset($_SESSION['user_id']) &&
-    isset($_SESSION['user_email'])) {
-
-	# Database Connection File
-	include "../db_conn.php";
-
-
-    /** 
-	  check if author 
-	  name is submitted
-	**/
-	if (isset($_POST['author_name'])) {
-		/** 
-		Get data from POST request 
-		and store it in var
-		**/
-		$name = $_POST['author_name'];
-
-		#simple form Validation
-		if (empty($name)) {
-			$em = "The author name is required";
-			header("Location: ../add-author.php?error=$em");
-            exit;
-		}else {
-			# Insert Into Database
-			$sql  = "INSERT INTO authors (name)
-			         VALUES (?)";
-			$stmt = $conn->prepare($sql);
-			$res  = $stmt->execute([$name]);
-
-			/**
-		      If there is no error while 
-		      inserting the data
-		    **/
-		     if ($res) {
-		     	# success message
-		     	$sm = "Successfully created!";
-				header("Location: ../add-author.php?success=$sm");
-	            exit;
-		     }else{
-		     	# Error message
-		     	$em = "Unknown Error Occurred!";
-				header("Location: ../add-author.php?error=$em");
-	            exit;
-		     }
-		}
-	}else {
-      header("Location: ../admin.php");
-      exit;
-	}
-
-}else{
-  header("Location: ../login.php");
-  exit;
+if (!isset($_SESSION['user_id']) || $_SESSION['user_type'] != 'admin') {
+    header("Location: ../login.php");
+    exit;
 }
+include "../db_conn.php";
+include "func-file-upload.php";
+
+$name = trim($_POST['name'] ?? '');
+if (empty($name)) {
+    header("Location: ../add-author.php?error=" . urlencode('Author name is required.'));
+    exit;
+}
+
+$photo = null;
+if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+    $upload_result = upload_file($_FILES['photo'], ['jpg','jpeg','png','gif','webp','bmp'], '../uploads/author_photos/');
+    if ($upload_result['status'] === 'success') {
+        $photo = $upload_result['data'];
+    }
+}
+
+$sql = "INSERT INTO authors (name, photo, about, qualification, designation, organization, contact)
+        VALUES (?, ?, ?, ?, ?, ?, ?)";
+$stmt = $conn->prepare($sql);
+$stmt->execute([
+    $name,
+    $photo,
+    trim($_POST['about'] ?? '') ?: null,
+    trim($_POST['qualification'] ?? '') ?: null,
+    trim($_POST['designation'] ?? '') ?: null,
+    trim($_POST['organization'] ?? '') ?: null,
+    trim($_POST['contact'] ?? '') ?: null
+]);
+
+header("Location: ../add-author.php?success=" . urlencode('Author added successfully.'));
+exit;

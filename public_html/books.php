@@ -3,6 +3,22 @@ session_start();
 include "db_conn.php";
 include "php/func-book.php";
 $books = get_all_books($conn);
+// Type filter
+if (isset($_GET['type']) && in_array($_GET['type'], ['book', 'research_paper'])) {
+    if (function_exists('get_books_by_type')) {
+        $books = get_books_by_type($conn, $_GET['type']);
+    } else {
+        // Fallback: filter in PHP
+        if (is_array($books)) {
+            $type_filter = $_GET['type'];
+            $books = array_filter($books, function($b) use ($type_filter) {
+                return !isset($b['content_type']) || $b['content_type'] === $type_filter;
+            });
+            $books = array_values($books);
+            if (empty($books)) $books = 0;
+        }
+    }
+}
 include "php/func-author.php";
 $authors = get_all_author($conn);
 include "php/func-category.php";
@@ -66,7 +82,9 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 				<ul class="navbar-nav mx-auto">
 					<li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
 					<li class="nav-item"><a class="nav-link active" href="books.php">Books</a></li>
+					<li class="nav-item"><a class="nav-link" href="books.php?type=research_paper">Research Papers</a></li>
 					<li class="nav-item"><a class="nav-link" href="categories.php">Categories</a></li>
+					<li class="nav-item"><a class="nav-link" href="authors.php">Authors</a></li>
 					<li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
 					<li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
 				</ul>
@@ -96,6 +114,19 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 		</div>
 	</section>
 
+	<!-- Content Type Filter -->
+	<section class="py-3">
+		<div class="container">
+			<div class="d-flex justify-content-center content-filter">
+				<div class="btn-group" role="group">
+					<a href="books.php" class="btn <?= !isset($_GET['type']) ? 'btn-primary' : 'btn-outline-primary' ?>"><i class="bi bi-grid"></i> All</a>
+					<a href="books.php?type=book" class="btn <?= isset($_GET['type']) && $_GET['type']=='book' ? 'btn-primary' : 'btn-outline-primary' ?>"><i class="bi bi-book"></i> Books</a>
+					<a href="books.php?type=research_paper" class="btn <?= isset($_GET['type']) && $_GET['type']=='research_paper' ? 'btn-primary' : 'btn-outline-primary' ?>"><i class="bi bi-journal-text"></i> Research Papers</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
 	<!-- Books Section -->
 	<section class="py-5">
 		<div class="container">
@@ -109,6 +140,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 				<div class="row g-4">
 					<?php foreach ($books as $book) { ?>
 					<div class="col-6 col-md-4 col-lg-3">
+						<a href="book-detail.php?id=<?=$book['id']?>" style="text-decoration:none;color:inherit;display:block;">
 						<div class="book-card">
 							<div class="book-image">
 								<img src="uploads/cover/<?=$book['cover']?>" alt="<?=$book['title']?>" onerror="this.src='https://via.placeholder.com/300x400?text=No+Cover'">
@@ -159,6 +191,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 								</div>
 							</div>
 						</div>
+						</a>
 					</div>
 					<?php } ?>
 				</div>

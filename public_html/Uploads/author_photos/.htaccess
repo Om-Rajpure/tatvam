@@ -1,0 +1,3 @@
+# Author photos are public — allow direct access
+Order allow,deny
+Allow from all

@@ -1,6 +1,13 @@
 <?php 
 session_start();
 
+$cart_count = 0;
+if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') {
+	include_once "php/func-cart.php";
+	if(isset($conn)) { $cart_count = get_cart_count($conn, $_SESSION['user_id']); }
+}
+
+
 # If search key is not set or empty
 if (!isset($_GET['key']) || empty($_GET['key'])) {
 	header("Location: index.php");
@@ -41,43 +48,68 @@ $categories = get_all_categories($conn);
 
 </head>
 <body>
-	<div class="container">
-		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		  <div class="container-fluid">
-		    <a class="navbar-brand" href="index.php">Online Book Store</a>
-		    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		      <span class="navbar-toggler-icon"></span>
-		    </button>
-		    <div class="collapse navbar-collapse" 
-		         id="navbarSupportedContent">
-		      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-		        <li class="nav-item">
-		          <a class="nav-link active" 
-		             aria-current="page" 
-		             href="index.php">Store</a>
-		        </li>
-		        <li class="nav-item">
-		          <a class="nav-link" 
-		             href="#">Contact</a>
-		        </li>
-		        <li class="nav-item">
-		          <a class="nav-link" 
-		             href="#">About</a>
-		        </li>
-		        <li class="nav-item">
-		          <?php if (isset($_SESSION['user_id'])) {?>
-		          	<a class="nav-link" 
-		             href="admin.php">Admin</a>
-		          <?php }else{ ?>
-		          <a class="nav-link" 
-		             href="login.php">Login</a>
-		          <?php } ?>
+	<!-- Top Bar -->
+	<div class="top-bar">
+		<div class="container">
+			<div class="d-flex justify-content-between align-items-center">
+				<div class="top-info">
+					<i class="bi bi-envelope"></i> support@tatvampublication.com
+					<span class="ms-3"><i class="bi bi-telephone"></i> +91 1234567890</span>
+				</div>
+				<div class="top-links">
+					<?php if (isset($_SESSION['user_id'])) {
+						if (isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') { ?>
+							<a href="my-orders.php"><i class="bi bi-bag-check"></i> My Orders</a>
+							<a href="user-profile.php" class="ms-2"><i class="bi bi-person-circle"></i> <?=$_SESSION['user_name']?></a>
+							<a href="php/user-logout.php" class="ms-2"><i class="bi bi-box-arrow-right"></i> Logout</a>
+						<?php } else { ?>
+							<a href="admin.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
+						<?php }
+					}else{ ?>
+						<a href="user-login.php"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+						<a href="register.php" class="ms-2"><i class="bi bi-person-plus"></i> Register</a>
+					<?php } ?>
+				</div>
+			</div>
+		</div>
+	</div>
 
-		        </li>
-		      </ul>
-		    </div>
-		  </div>
-		</nav><br>
+	<!-- Navigation -->
+	<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+		<div class="container">
+			<a class="navbar-brand" href="index.php">
+				<i class="bi bi-book-half text-primary"></i>
+				<span class="brand-text">Tatvam <span class="text-primary">Publication</span></span>
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarMain">
+				<ul class="navbar-nav mx-auto">
+					<li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
+					<li class="nav-item"><a class="nav-link" href="books.php">Books</a></li>
+					<li class="nav-item"><a class="nav-link" href="books.php?type=research_paper">Research Papers</a></li>
+					<li class="nav-item"><a class="nav-link" href="categories.php">Categories</a></li>
+					<li class="nav-item"><a class="nav-link" href="authors.php">Authors</a></li>
+					<li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
+					<li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+				</ul>
+				<div class="d-flex align-items-center">
+					<?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') { ?>
+						<a href="cart.php" class="btn btn-primary position-relative">
+							<i class="bi bi-cart3"></i> Cart
+							<?php if (isset($cart_count) && $cart_count > 0) { ?>
+								<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?=$cart_count?></span>
+							<?php } ?>
+						</a>
+					<?php } else { ?>
+						<a href="user-login.php" class="btn btn-primary"><i class="bi bi-cart3"></i> Cart</a>
+					<?php } ?>
+				</div>
+			</div>
+		</div>
+	</nav>
+	<div class="container"><br>
 		Search result for <b><?=$key?></b>
 
 		<div class="d-flex pt-3">
@@ -94,6 +126,7 @@ $categories = get_all_categories($conn);
 			<?php }else{ ?>
 			<div class="pdf-list d-flex flex-wrap">
 				<?php foreach ($books as $book) { ?>
+				<a href="book-detail.php?id=<?=$book['id']?>" style="text-decoration:none;color:inherit;display:block;">
 				<div class="card m-1">
 					<img src="uploads/cover/<?=$book['cover']?>"
 					     class="card-img-top">
@@ -132,6 +165,7 @@ $categories = get_all_categories($conn);
                           download="<?=$book['title']?>">Download</a>
 					</div>
 				</div>
+				</a>
 				<?php } ?>
 			</div>
 		<?php } ?>

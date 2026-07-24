@@ -1,14 +1,21 @@
 <?php 
 
 # server name
-$sName = "localhost";
+// $sName = "localhost";
 # user name
-$uName = "u679317752_tatvam";
+// $uName = "u679317752_tatvam";
 # password
-$pass = "Tatvam@1313";
+// $pass = "Tatvam@1313";
 
 # database name
-$db_name = "u679317752_tatvam";
+// 
+
+
+$sName = "localhost";
+$uName = "root";
+$pass = "";
+$db_name = "tatvam";
+
 
 /**
 creating database connection 

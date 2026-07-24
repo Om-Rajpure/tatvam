@@ -1,0 +1,5 @@
+# Block direct browser access to uploaded PDF files.
+# All downloads must go through download.php which enforces purchase verification.
+# This prevents users from accessing full PDFs by guessing/knowing the filename.
+Order deny,allow
+Deny from all

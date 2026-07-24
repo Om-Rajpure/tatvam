@@ -53,7 +53,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 		<div class="container">
 			<a class="navbar-brand" href="index.php">
 				<i class="bi bi-book-half text-primary"></i>
-				<span class="brand-text">Book<span class="text-primary">Hub</span></span>
+				<span class="brand-text">Tatvam <span class="text-primary">Publication</span></span>
 			</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
 				<span class="navbar-toggler-icon"></span>
@@ -62,7 +62,9 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 				<ul class="navbar-nav mx-auto">
 					<li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
 					<li class="nav-item"><a class="nav-link" href="books.php">Books</a></li>
+					<li class="nav-item"><a class="nav-link" href="books.php?type=research_paper">Research Papers</a></li>
 					<li class="nav-item"><a class="nav-link active" href="categories.php">Categories</a></li>
+					<li class="nav-item"><a class="nav-link" href="authors.php">Authors</a></li>
 					<li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
 					<li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
 				</ul>
@@ -123,7 +125,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 		<div class="container">
 			<div class="row g-4">
 				<div class="col-lg-4">
-					<h4 class="mb-3"><i class="bi bi-book-half text-primary"></i> Book<span class="text-primary">Hub</span></h4>
+					<h4 class="mb-3"><i class="bi bi-book-half text-primary"></i> Tatvam <span class="text-primary">Publication</span></h4>
 					<p class="text-muted">Your premium destination for digital books.</p>
 				</div>
 				<div class="col-lg-2 col-6">

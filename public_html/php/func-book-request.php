@@ -2,8 +2,8 @@
 
 // Submit book request
 function submit_book_request($con, $data) {
-    $sql = "INSERT INTO book_requests (user_id, title, description, author_name, category_id, price, cover, file) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO book_requests (user_id, title, description, author_name, category_id, price, cover, file, content_type, isbn, doi, pages, format, preview_file) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $con->prepare($sql);
     return $stmt->execute([
         $data['user_id'],
@@ -13,7 +13,13 @@ function submit_book_request($con, $data) {
         $data['category_id'],
         $data['price'],
         $data['cover'],
-        $data['file']
+        $data['file'],
+        $data['content_type'] ?? 'book',
+        $data['isbn'] ?? null,
+        $data['doi'] ?? null,
+        $data['pages'] ?? null,
+        $data['format'] ?? 'eBook',
+        $data['preview_file'] ?? null
     ]);
 }
 
@@ -113,8 +119,8 @@ function publish_book($con, $request_id, $admin_notes = '') {
     }
     
     // Insert book
-    $book_sql = "INSERT INTO books (title, author_id, description, price, category_id, cover, file) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $book_sql = "INSERT INTO books (title, author_id, description, price, category_id, cover, file, content_type, isbn, doi, pages, format, preview_file) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $con->prepare($book_sql);
     $stmt->execute([
         $request['title'],
@@ -123,7 +129,13 @@ function publish_book($con, $request_id, $admin_notes = '') {
         $request['price'],
         $request['category_id'],
         $request['cover'],
-        $request['file']
+        $request['file'],
+        $request['content_type'],
+        $request['isbn'],
+        $request['doi'],
+        $request['pages'],
+        $request['format'],
+        $request['preview_file']
     ]);
     
     // Update request status

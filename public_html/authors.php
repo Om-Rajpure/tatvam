@@ -1,6 +1,12 @@
 <?php 
 session_start();
 include "db_conn.php";
+include "php/func-author.php";
+if (function_exists('get_all_authors_with_stats')) {
+    $authors = get_all_authors_with_stats($conn);
+} else {
+    $authors = get_all_author($conn);
+}
 
 $cart_count = 0;
 if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') {
@@ -13,11 +19,21 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>About Us - Tatvam Publication</title>
+	<title>Our Authors - Tatvam Publication</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/style.css">
+    <style>
+        .author-card-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px;
+            display: block;
+        }
+    </style>
 </head>
 <body>
 	<!-- Top Bar -->
@@ -60,11 +76,14 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 				<ul class="navbar-nav mx-auto">
 					<li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
 					<li class="nav-item"><a class="nav-link" href="books.php">Books</a></li>
-					<li class="nav-item"><a class="nav-link" href="books.php?type=research_paper">Research Papers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="books.php?type=research_paper">Research Papers</a></li>
 					<li class="nav-item"><a class="nav-link" href="categories.php">Categories</a></li>
-					<li class="nav-item"><a class="nav-link" href="authors.php">Authors</a></li>
-					<li class="nav-item"><a class="nav-link active" href="about.php">About</a></li>
+					<li class="nav-item"><a class="nav-link active" href="authors.php">Authors</a></li>
+					<li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
 					<li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+                    <?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') { ?>
+                        <li class="nav-item"><a class="nav-link" href="author-registration.php">Publish Your Book</a></li>
+                    <?php } ?>
 				</ul>
 				<div class="d-flex align-items-center">
 					<?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') { ?>
@@ -84,77 +103,50 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 		</div>
 	</nav>
 
-	<!-- About Hero -->
-	<section class="hero-section" style="padding: 80px 0;">
-		<div class="container">
-			<div class="text-center mb-5">
-				<h1 class="display-4 fw-bold">About <span class="text-primary">Tatvam Publication</span></h1>
-				<p class="lead text-muted">Your trusted partner in digital reading</p>
-			</div>
-		</div>
-	</section>
-
-	<!-- About Content -->
-	<section class="py-5">
-		<div class="container">
-			<div class="row align-items-center mb-5">
-				<div class="col-lg-6">
-					<h2 class="fw-bold mb-4">Our Story</h2>
-					<p class="text-muted">Tatvam Publication was founded with a simple mission: to make quality books accessible to everyone, everywhere. We believe that knowledge should be available at your fingertips, and reading should be a delightful experience.</p>
-					<p class="text-muted">Since our inception, we've grown to become one of the leading digital bookstores, serving thousands of readers worldwide with our extensive collection of books across all genres.</p>
-				</div>
-				<div class="col-lg-6">
-					<img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600" alt="Books" class="img-fluid rounded shadow">
-				</div>
-			</div>
-
-			<div class="row align-items-center mb-5">
-				<div class="col-lg-6 order-lg-2">
-					<h2 class="fw-bold mb-4">Our Mission</h2>
-					<p class="text-muted">We strive to create a seamless reading experience by providing instant access to a vast library of digital books. Our platform is designed to be user-friendly, secure, and accessible to readers of all ages.</p>
-					<p class="text-muted">We're committed to supporting authors and publishers while making literature more accessible and affordable for readers worldwide.</p>
-				</div>
-				<div class="col-lg-6 order-lg-1">
-					<img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600" alt="Reading" class="img-fluid rounded shadow">
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- Features -->
+	<!-- Page Header -->
 	<section class="py-5 bg-light">
 		<div class="container">
-			<h2 class="text-center fw-bold mb-5">Why Choose Us</h2>
-			<div class="row g-4">
-				<div class="col-md-3">
-					<div class="text-center p-4">
-						<i class="bi bi-download display-3 text-primary mb-3"></i>
-						<h5>Instant Download</h5>
-						<p class="text-muted small">Get your books immediately after purchase</p>
-					</div>
+			<h1 class="display-5 fw-bold text-center">Meet Our <span class="text-primary">Authors</span></h1>
+			<p class="text-center text-muted">The brilliant minds behind our collection</p>
+		</div>
+	</section>
+
+	<!-- Authors Section -->
+	<section class="py-5">
+		<div class="container">
+			<?php if ($authors == 0){ ?>
+				<div class="text-center py-5">
+					<i class="bi bi-inbox display-1 text-muted"></i>
+					<h4 class="mt-3 text-muted">No authors available yet</h4>
+					<p class="text-muted">Check back soon</p>
 				</div>
-				<div class="col-md-3">
-					<div class="text-center p-4">
-						<i class="bi bi-infinity display-3 text-primary mb-3"></i>
-						<h5>Lifetime Access</h5>
-						<p class="text-muted small">Read your books anytime, anywhere</p>
+			<?php }else{ ?>
+				<div class="row g-4">
+					<?php foreach ($authors as $author) { ?>
+					<div class="col-6 col-md-4 col-lg-3">
+						<a href="author.php?id=<?=$author['id']?>" class="author-card" style="text-decoration:none;">
+                            <?php if (!empty($author['photo'])): ?>
+                                <div><img src="uploads/author_photos/<?=$author['photo']?>" class="author-card-photo" alt="<?=htmlspecialchars($author['name'])?>"></div>
+                            <?php else: ?>
+                                <div class="author-avatar"><i class="bi bi-person-circle"></i></div>
+                            <?php endif; ?>
+                            
+                            <h5><?=htmlspecialchars($author['name'])?></h5>
+                            
+                            <?php if (!empty($author['qualification'])): ?>
+                                <p class="text-muted small mb-1"><?=htmlspecialchars($author['qualification'])?></p>
+                            <?php endif; ?>
+                            
+                            <?php if (!empty($author['designation'])): ?>
+                                <p class="text-muted small mb-0"><?=htmlspecialchars($author['designation'])?></p>
+                            <?php endif; ?>
+                            
+                            <p class="text-muted small mt-2"><i class="bi bi-arrow-right-circle"></i> View Profile</p>
+						</a>
 					</div>
+					<?php } ?>
 				</div>
-				<div class="col-md-3">
-					<div class="text-center p-4">
-						<i class="bi bi-shield-check display-3 text-primary mb-3"></i>
-						<h5>Secure Payment</h5>
-						<p class="text-muted small">Safe and encrypted transactions</p>
-					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="text-center p-4">
-						<i class="bi bi-headset display-3 text-primary mb-3"></i>
-						<h5>24/7 Support</h5>
-						<p class="text-muted small">We're here to help you anytime</p>
-					</div>
-				</div>
-			</div>
+			<?php } ?>
 		</div>
 	</section>
 
@@ -164,7 +156,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 			<div class="row g-4">
 				<div class="col-lg-4">
 					<h4 class="mb-3"><i class="bi bi-book-half text-primary"></i> Tatvam <span class="text-primary">Publication</span></h4>
-					<p class="text-muted">Your premium destination for digital books. Discover, download, and enjoy unlimited reading.</p>
+					<p class="text-muted">Your premium destination for digital books.</p>
 				</div>
 				<div class="col-lg-2 col-6">
 					<h5 class="mb-3">Quick Links</h5>
@@ -179,8 +171,6 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['u
 					<h5 class="mb-3">Support</h5>
 					<ul class="footer-links">
 						<li><a href="contact.php">Contact Us</a></li>
-						<li><a href="#">Privacy Policy</a></li>
-						<li><a href="#">Terms of Service</a></li>
 					</ul>
 				</div>
 				<div class="col-lg-4">

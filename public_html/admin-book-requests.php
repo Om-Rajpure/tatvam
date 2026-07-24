@@ -10,6 +10,14 @@ include "php/func-book-request.php";
 
 $status_filter = isset($_GET['status']) ? $_GET['status'] : null;
 $requests = get_all_requests($conn, $status_filter);
+
+if (isset($_GET['type'])) {
+    $type_filter = $_GET['type'];
+    $requests = array_filter($requests, function($r) use ($type_filter) {
+        return isset($r['content_type']) && $r['content_type'] === $type_filter;
+    });
+}
+
 $stats = get_request_stats($conn);
 ?>
 <!DOCTYPE html>
@@ -105,8 +113,11 @@ $stats = get_request_stats($conn);
                 <div class="card table-card mb-4 border-0">
                     <div class="card-body">
                         <div class="btn-group" role="group">
-                            <a href="admin-book-requests.php" class="btn <?= !$status_filter ? 'btn-primary' : 'btn-outline-primary' ?>">
+                            <a href="admin-book-requests.php" class="btn <?= !$status_filter && !isset($_GET['type']) ? 'btn-primary' : 'btn-outline-primary' ?>">
                                 <i class="bi bi-list"></i> All
+                            </a>
+                            <a href="admin-book-requests.php?type=research_paper" class="btn <?= !$status_filter && isset($_GET['type']) && $_GET['type'] == 'research_paper' ? 'btn-info' : 'btn-outline-info' ?>">
+                                <i class="bi bi-journal-text"></i> Research Papers
                             </a>
                             <a href="admin-book-requests.php?status=pending" class="btn <?= $status_filter == 'pending' ? 'btn-warning' : 'btn-outline-warning' ?>">
                                 <i class="bi bi-clock"></i> Pending
@@ -135,6 +146,7 @@ $stats = get_request_stats($conn);
                                     <thead>
                                         <tr>
                                             <th>Cover</th>
+                                            <th>Type</th>
                                             <th>Book Details</th>
                                             <th>Author</th>
                                             <th>Submitted By</th>
@@ -156,6 +168,7 @@ $stats = get_request_stats($conn);
                                             <td>
                                                 <img src="uploads/cover/<?= $request['cover'] ?>" width="50" class="rounded">
                                             </td>
+                                            <td><span class="badge <?= (isset($request['content_type']) && $request['content_type']=='research_paper') ? 'bg-info text-dark' : 'bg-primary' ?>"><?= (isset($request['content_type']) && $request['content_type']=='research_paper') ? 'Research Paper' : 'Book' ?></span></td>
                                             <td>
                                                 <strong><?= htmlspecialchars($request['title']) ?></strong><br>
                                                 <small class="text-muted"><?= htmlspecialchars($request['category_name']) ?></small><br>
@@ -210,18 +223,11 @@ $stats = get_request_stats($conn);
         }
 
         function approveRequest(id) {
-            const fee = prompt('Enter publishing fee (₹) - Enter 0 for free publishing:');
-            if (fee !== null) {
-                const notes = prompt('Enter approval notes (optional):');
-                window.location.href = 'php/approve-book-request.php?id=' + id + '&fee=' + fee + '&notes=' + encodeURIComponent(notes || '');
-            }
+            window.location.href = 'admin-view-request.php?id=' + id;
         }
 
         function rejectRequest(id) {
-            const notes = prompt('Enter rejection reason:');
-            if (notes) {
-                window.location.href = 'php/reject-book-request.php?id=' + id + '&notes=' + encodeURIComponent(notes);
-            }
+            window.location.href = 'admin-view-request.php?id=' + id;
         }
 
         function verifyPayment(id) {

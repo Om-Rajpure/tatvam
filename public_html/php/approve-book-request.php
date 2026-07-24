@@ -20,10 +20,19 @@ if ($request_id > 0) {
         } else {
             $_SESSION['success'] = "Request approved! User needs to pay ₹" . number_format($publishing_fee, 2) . " publishing fee";
         }
+        
+        $request = get_request($conn, $request_id);
+        // TODO (REQ-027): Send notification to author on approval
+        // send_notification($request['user_id'], 'approved', $request['title']);
+        
     } else {
-        $_SESSION['success'] = "Failed to approve request";
+        $_SESSION['error'] = "Failed to approve request";
     }
 }
 
-header("Location: ../admin-book-requests.php");
+if (isset($_GET['from_detail']) && $_GET['from_detail'] == 1) {
+    header("Location: ../admin-view-request.php?id=" . $request_id);
+} else {
+    header("Location: ../admin-book-requests.php");
+}
 exit;

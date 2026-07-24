@@ -31,7 +31,7 @@ $cart_count = get_cart_count($conn, $user_id);
         <div class="container">
             <a class="navbar-brand" href="index.php">
                 <i class="bi bi-book-half text-primary"></i>
-                <span class="brand-text">Book<span class="text-primary">Hub</span></span>
+                <span class="brand-text">Tatvam <span class="text-primary">Publication</span></span>
             </a>
             <div class="ms-auto">
                 <a href="index.php" class="btn btn-outline-primary me-2"><i class="bi bi-house"></i> Home</a>

@@ -579,3 +579,156 @@ body {
 		height: 250px;
 	}
 }
+
+/* ========================================
+   Modules 1-7 Additions — Tatvam Publication
+   Date: 2026-07-24
+   NOTE: Only additive — existing rules unchanged
+   ======================================== */
+
+/* Research Paper content-type badge (teal variant of book-category) */
+.research-paper-badge {
+    background: #e0f7fa;
+    color: #00838f;
+}
+
+/* Authors listing page — photo in author-card */
+.author-card-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 15px;
+    display: block;
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+/* Author profile page (author.php rebuild) */
+.author-profile-hero {
+    background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%);
+    padding: 60px 0 50px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.author-profile-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.35);
+}
+
+.author-profile-avatar {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: white;
+    margin: 0 auto;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.35);
+}
+
+/* Book/Paper detail page */
+.detail-cover {
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+}
+
+.detail-meta-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.detail-meta-table td {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.95rem;
+}
+
+.detail-meta-table td:first-child {
+    color: #6c757d;
+    font-weight: 500;
+    width: 130px;
+    vertical-align: top;
+}
+
+.detail-meta-table td:last-child {
+    font-weight: 600;
+    color: #333;
+}
+
+.detail-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* Author about card on detail page */
+.author-about-photo {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+.author-about-avatar {
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+/* Download action buttons on detail page */
+.download-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.download-actions .btn {
+    min-width: 160px;
+}
+
+/* Content type filter tabs (books.php) */
+.content-filter .btn {
+    border-radius: 25px;
+    padding: 8px 20px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* Admin view request page */
+.request-detail-label {
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.request-detail-value {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0;
+}

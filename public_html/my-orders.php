@@ -27,10 +27,12 @@ $orders = get_user_orders($conn, $user_id);
         <div class="container">
             <a class="navbar-brand" href="index.php">
                 <i class="bi bi-book-half text-primary"></i>
-                <span class="brand-text">Book<span class="text-primary">Hub</span></span>
+                <span class="brand-text">Tatvam <span class="text-primary">Publication</span></span>
             </a>
             <div class="ms-auto">
                 <a href="index.php" class="btn btn-outline-primary me-2"><i class="bi bi-house"></i> Home</a>
+                <a href="books.php?type=research_paper" class="btn btn-outline-secondary me-2"><i class="bi bi-journal-text"></i> Research Papers</a>
+                <a href="authors.php" class="btn btn-outline-secondary me-2"><i class="bi bi-people"></i> Authors</a>
                 <a href="cart.php" class="btn btn-outline-secondary me-2"><i class="bi bi-cart"></i> Cart</a>
                 <a href="user-profile.php" class="btn btn-outline-secondary"><i class="bi bi-person"></i> Profile</a>
             </div>

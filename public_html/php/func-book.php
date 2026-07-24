@@ -83,3 +83,14 @@ function get_books_by_author($con, $id){
 
    return $books;
 }
+
+// Get books filtered by content_type
+function get_books_by_type($conn, $type) {
+    $sql = "SELECT * FROM books WHERE content_type = ? ORDER BY id DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$type]);
+    if ($stmt->rowCount() > 0) {
+        return $stmt->fetchAll();
+    }
+    return 0;
+}
