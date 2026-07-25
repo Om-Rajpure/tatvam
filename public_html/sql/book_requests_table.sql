@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS book_requests (
     status ENUM('pending', 'approved', 'payment_pending', 'published', 'rejected') DEFAULT 'pending',
     publishing_fee DECIMAL(10,2) DEFAULT 0.00,
     payment_status ENUM('unpaid', 'paid') DEFAULT 'unpaid',
-    transaction_id VARCHAR(255) NULL,
+    transaction_id VARCHAR(191) NULL,
     admin_notes TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     reviewed_at TIMESTAMP NULL,

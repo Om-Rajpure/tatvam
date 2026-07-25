@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `admin` (
   `id` int(11) NOT NULL,
   `full_name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
+  `email` varchar(191) NOT NULL,
   `password` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -76,7 +76,7 @@ CREATE TABLE `books` (
 
 CREATE TABLE `categories` (
   `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL
+  `name` varchar(191) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --

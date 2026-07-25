@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `admin` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `full_name` VARCHAR(255) NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(191) NOT NULL,
   `password` TEXT NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `admin` (
 CREATE TABLE IF NOT EXISTS `users` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `full_name` VARCHAR(255) NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(191) NOT NULL,
   `phone` VARCHAR(20) NOT NULL,
   `password` TEXT NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(191) NOT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_categories_name` (`name`)
@@ -181,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `book_requests` (
   `status` ENUM('pending','approved','payment_pending','published','rejected') DEFAULT 'pending',
   `publishing_fee` DECIMAL(10,2) DEFAULT '0.00',
   `payment_status` ENUM('unpaid','paid') DEFAULT 'unpaid',
-  `transaction_id` VARCHAR(255) DEFAULT NULL,
+  `transaction_id` VARCHAR(191) DEFAULT NULL,
   `scanner_status` ENUM('pending','passed','failed') DEFAULT 'passed',
   `admin_notes` TEXT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -294,7 +294,7 @@ CREATE TABLE IF NOT EXISTS `order_items` (
 CREATE TABLE IF NOT EXISTS `payments` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `order_id` INT(11) NOT NULL,
-  `transaction_id` VARCHAR(255) DEFAULT NULL,
+  `transaction_id` VARCHAR(191) DEFAULT NULL,
   `upi_id` VARCHAR(255) DEFAULT NULL,
   `amount` DECIMAL(10,2) NOT NULL,
   `status` ENUM('pending','success','completed','failed') DEFAULT 'pending',
@@ -359,81 +359,8 @@ CREATE TABLE IF NOT EXISTS `admin_approvals` (
 
 
 /* ----------------------------------------------------------------------------
-   IDEMPOTENT ALTER STATEMENTS FOR EXISTING TABLES
+   SCHEMA COMPLETE - ALL COLUMNS NATIVELY INCLUDED IN CREATE TABLE DEFINITIONS
    ---------------------------------------------------------------------------- */
-
-/* Authors Profile Fields Migration */
-SET @dbname = DATABASE();
-
-SET @tablename = "authors";
-
-SET @columnname = "user_id";
-
-SET @preparedStatement = (SELECT IF(
-  (
-    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE
-      TABLE_SCHEMA = @dbname
-      AND TABLE_NAME = @tablename
-      AND COLUMN_NAME = @columnname
-  ) > 0,
-  "SELECT 1",
-  "ALTER TABLE authors ADD COLUMN user_id INT(11) NULL AFTER id, ADD COLUMN photo VARCHAR(255) NULL, ADD COLUMN about TEXT NULL, ADD COLUMN qualification VARCHAR(255) NULL, ADD COLUMN designation VARCHAR(255) NULL, ADD COLUMN organization VARCHAR(255) NULL, ADD COLUMN contact VARCHAR(255) NULL;"
-));
-
-PREPARE alterIfNotExists FROM @preparedStatement;
-
-EXECUTE alterIfNotExists;
-
-DEALLOCATE PREPARE alterIfNotExists;
-
-
-/* Books Extended Metadata Fields Migration */
-SET @columnname = "content_type";
-
-SET @tablename = "books";
-
-SET @preparedStatement = (SELECT IF(
-  (
-    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE
-      TABLE_SCHEMA = @dbname
-      AND TABLE_NAME = @tablename
-      AND COLUMN_NAME = @columnname
-  ) > 0,
-  "SELECT 1",
-  "ALTER TABLE books ADD COLUMN content_type ENUM('book','research_paper') NOT NULL DEFAULT 'book' AFTER category_id, ADD COLUMN isbn VARCHAR(50) NULL, ADD COLUMN doi VARCHAR(100) NULL, ADD COLUMN pages INT NULL, ADD COLUMN format ENUM('Paperback','eBook') DEFAULT 'eBook', ADD COLUMN preview_file VARCHAR(255) NULL;"
-));
-
-PREPARE alterIfNotExists FROM @preparedStatement;
-
-EXECUTE alterIfNotExists;
-
-DEALLOCATE PREPARE alterIfNotExists;
-
-
-/* Orders Full Name, Email, Phone Migration */
-SET @columnname = "full_name";
-
-SET @tablename = "orders";
-
-SET @preparedStatement = (SELECT IF(
-  (
-    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
-    WHERE
-      TABLE_SCHEMA = @dbname
-      AND TABLE_NAME = @tablename
-      AND COLUMN_NAME = @columnname
-  ) > 0,
-  "SELECT 1",
-  "ALTER TABLE orders ADD COLUMN full_name VARCHAR(255) NOT NULL AFTER order_number, ADD COLUMN email VARCHAR(255) NOT NULL AFTER full_name, ADD COLUMN phone VARCHAR(20) NOT NULL AFTER email;"
-));
-
-PREPARE alterIfNotExists FROM @preparedStatement;
-
-EXECUTE alterIfNotExists;
-
-DEALLOCATE PREPARE alterIfNotExists;
 
 
 /* ----------------------------------------------------------------------------
