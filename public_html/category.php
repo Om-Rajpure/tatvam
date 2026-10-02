@@ -1,216 +1,235 @@
 <?php 
 session_start();
-
-$cart_count = 0;
-if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') {
-	include_once "php/func-cart.php";
-	if(isset($conn)) { $cart_count = get_cart_count($conn, $_SESSION['user_id']); }
-}
-
-
-# If not category ID is set
-if (!isset($_GET['id'])) {
-	header("Location: index.php");
-	exit;
-}
-
-# Get category ID from GET request
-$id = $_GET['id'];
-
-# Database Connection File
 include "db_conn.php";
-
-# Book helper function
 include "php/func-book.php";
-$books = get_books_by_category($conn, $id);
-
-# author helper function
 include "php/func-author.php";
-$authors = get_all_author($conn);
-
-# Category helper function
 include "php/func-category.php";
-$categories = get_all_categories($conn);
+
+if (!isset($_GET['id']) || intval($_GET['id']) <= 0) {
+    header("Location: categories.php");
+    exit;
+}
+
+$id = intval($_GET['id']);
 $current_category = get_category($conn, $id);
 
- ?>
+if (!$current_category) {
+    header("Location: categories.php");
+    exit;
+}
+
+$books = get_books_by_category($conn, $id);
+$authors = get_all_author($conn);
+$categories = get_all_categories_with_count($conn);
+
+$cart_count = 0;
+if (isset($_SESSION['user_id'], $_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') {
+    include_once "php/func-cart.php";
+    $cart_count = get_cart_count($conn, $_SESSION['user_id']);
+}
+
+$current_page = 'categories.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title><?=$current_category['name']?></title>
-
-    <!-- bootstrap 5 CDN-->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-
-    <!-- bootstrap 5 Js bundle CDN-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($current_category['name']) ?> — Tatvam Publication</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-
+    <style>
+        .book-card-wrapper {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .book-card-link-title {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        .book-card-link-title:hover {
+            color: var(--secondary);
+        }
+        .action-button-layer {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
 </head>
 <body>
-	<!-- Top Bar -->
-	<div class="top-bar">
-		<div class="container">
-			<div class="d-flex justify-content-between align-items-center">
-				<div class="top-info">
-					<i class="bi bi-envelope"></i> support@tatvampublication.com
-					<span class="ms-3"><i class="bi bi-telephone"></i> +91 1234567890</span>
-				</div>
-				<div class="top-links">
-					<?php if (isset($_SESSION['user_id'])) {
-						if (isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') { ?>
-							<a href="my-orders.php"><i class="bi bi-bag-check"></i> My Orders</a>
-							<a href="user-profile.php" class="ms-2"><i class="bi bi-person-circle"></i> <?=$_SESSION['user_name']?></a>
-							<a href="php/user-logout.php" class="ms-2"><i class="bi bi-box-arrow-right"></i> Logout</a>
-						<?php } else { ?>
-							<a href="admin.php"><i class="bi bi-speedometer2"></i> Dashboard</a>
-						<?php }
-					}else{ ?>
-						<a href="user-login.php"><i class="bi bi-box-arrow-in-right"></i> Login</a>
-						<a href="register.php" class="ms-2"><i class="bi bi-person-plus"></i> Register</a>
-					<?php } ?>
-				</div>
-			</div>
-		</div>
-	</div>
 
-	<!-- Navigation -->
-	<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
-		<div class="container">
-			<a class="navbar-brand" href="index.php">
-				<i class="bi bi-book-half text-primary"></i>
-				<span class="brand-text">Tatvam <span class="text-primary">Publication</span></span>
-			</a>
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarMain">
-				<ul class="navbar-nav mx-auto">
-					<li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
-					<li class="nav-item"><a class="nav-link" href="books.php">Books</a></li>
-					<li class="nav-item"><a class="nav-link" href="books.php?type=research_paper">Research Papers</a></li>
-					<li class="nav-item"><a class="nav-link active" href="categories.php">Categories</a></li>
-					<li class="nav-item"><a class="nav-link" href="authors.php">Authors</a></li>
-					<li class="nav-item"><a class="nav-link" href="reference.php">Reference</a></li>
-					<li class="nav-item"><a class="nav-link" href="about.php">About</a></li>
-					<li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
-				</ul>
-				<div class="d-flex align-items-center">
-					<?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] == 'customer') { ?>
-						<a href="cart.php" class="btn btn-primary position-relative">
-							<i class="bi bi-cart3"></i> Cart
-							<?php if (isset($cart_count) && $cart_count > 0) { ?>
-								<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"><?=$cart_count?></span>
-							<?php } ?>
-						</a>
-					<?php } else { ?>
-						<a href="user-login.php" class="btn btn-primary"><i class="bi bi-cart3"></i> Cart</a>
-					<?php } ?>
-				</div>
-			</div>
-		</div>
-	</nav>
-	<div class="container">
-		<h1 class="display-4 p-3 fs-3"> 
-			<a href="index.php"
-			   class="nd">
-				<img src="img/back-arrow.PNG" 
-				     width="35">
-			</a>
-		   <?=$current_category['name']?>
-		</h1>
-		<div class="d-flex pt-3">
-			<?php if ($books == 0){ ?>
-				<div class="alert alert-warning 
-        	            text-center p-5" 
-        	     role="alert">
-        	     <img src="img/empty.png" 
-        	          width="100">
-        	     <br>
-			    There is no book in the database
-		       </div>
-			<?php }else{ ?>
-			<div class="pdf-list d-flex flex-wrap">
-				<?php foreach ($books as $book) { ?>
-				<a href="book-detail.php?id=<?=$book['id']?>" style="text-decoration:none;color:inherit;display:block;">
-				<div class="card m-1">
-					<img src="uploads/cover/<?=$book['cover']?>"
-					     class="card-img-top">
-					<div class="card-body">
-						<h5 class="card-title">
-							<?=$book['title']?>
-						</h5>
-						<p class="card-text">
-							<i><b>By:
-								<?php foreach($authors as $author){ 
-									if ($author['id'] == $book['author_id']) {
-										echo $author['name'];
-										break;
-									}
-								?>
+<?php include "php/navbar.php"; ?>
 
-								<?php } ?>
-							<br></b></i>
-							<?=$book['description']?>
-							<br><i><b>Category:
-								<?php foreach($categories as $category){ 
-									if ($category['id'] == $book['category_id']) {
-										echo $category['name'];
-										break;
-									}
-								?>
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-2">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+                <li class="breadcrumb-item"><a href="categories.php">Categories</a></li>
+                <li class="breadcrumb-item active"><?= htmlspecialchars($current_category['name']) ?></li>
+            </ol>
+        </nav>
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3">
+            <div>
+                <a href="categories.php" class="text-muted small text-decoration-none d-inline-flex align-items-center gap-1 mb-2">
+                    <i class="bi bi-arrow-left"></i> Back to all categories
+                </a>
+                <h1 class="mb-1"><?= htmlspecialchars($current_category['name']) ?></h1>
+                <p class="text-secondary">Browse academic books and research papers published in <?= htmlspecialchars($current_category['name']) ?></p>
+            </div>
+            <div class="text-muted small">
+                <strong><?= is_array($books) ? count($books) : 0 ?></strong> <?= is_array($books) && count($books) === 1 ? 'publication' : 'publications' ?>
+            </div>
+        </div>
+    </div>
+</section>
 
-								<?php } ?>
-							<br></b></i>
-						</p>
-                       <a href="uploads/files/<?=$book['file']?>"
-                          class="btn btn-success">Open</a>
+<!-- Publications Grid -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Sidebar: Other Categories -->
+            <div class="col-lg-3 d-none d-lg-block">
+                <div class="card border p-3 rounded-3 shadow-none bg-white">
+                    <h6 class="fw-bold mb-3 text-uppercase text-muted" style="font-size:12px; letter-spacing:0.05em;">
+                        Academic Categories
+                    </h6>
+                    <div class="list-group list-group-flush">
+                        <?php if (is_array($categories)): ?>
+                            <?php foreach ($categories as $cat): ?>
+                                <a href="category.php?id=<?= $cat['id'] ?>"
+                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2 px-2 border-0 rounded-2 <?= $cat['id'] == $id ? 'bg-primary text-white fw-bold' : '' ?>"
+                                   style="font-size: 13.5px;">
+                                    <span><?= htmlspecialchars($cat['name']) ?></span>
+                                    <span class="badge rounded-pill <?= $cat['id'] == $id ? 'bg-light text-dark' : 'bg-light text-muted' ?>" style="font-size:11px;">
+                                        <?= intval($cat['book_count'] ?? 0) ?>
+                                    </span>
+                                </a>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
 
-                        <a href="uploads/files/<?=$book['file']?>"
-                          class="btn btn-primary"
-                          download="<?=$book['title']?>">Download</a>
-					</div>
-				</div>
-				</a>
-				<?php } ?>
-			</div>
-		<?php } ?>
+            <!-- Main Publications Grid -->
+            <div class="col-12 col-lg-9">
+                <?php if ($books == 0 || (is_array($books) && count($books) === 0)): ?>
+                    <div class="empty-state bg-white border rounded-3 p-5 text-center">
+                        <i class="bi bi-journal-x empty-icon"></i>
+                        <h4 class="mt-3">No publications in this category yet</h4>
+                        <p class="text-muted">New scholarly books and research papers for <?= htmlspecialchars($current_category['name']) ?> are currently being peer-reviewed.</p>
+                        <div class="d-flex justify-content-center gap-2 mt-3">
+                            <a href="categories.php" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-grid me-1"></i> All Categories
+                            </a>
+                            <a href="books.php" class="btn btn-primary btn-sm">
+                                <i class="bi bi-book me-1"></i> All Books
+                            </a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <div class="row g-4">
+                        <?php foreach ($books as $book):
+                            $is_paper = ($book['content_type'] ?? 'book') === 'research_paper';
+                            $book_author = '';
+                            if (is_array($authors)) {
+                                foreach ($authors as $a) {
+                                    if ($a['id'] == $book['author_id']) {
+                                        $book_author = $a['name'];
+                                        break;
+                                    }
+                                }
+                            }
+                        ?>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="book-card-wrapper">
+                                <div class="book-card">
+                                    <div class="book-image">
+                                        <a href="book-detail.php?id=<?= $book['id'] ?>" aria-label="<?= htmlspecialchars($book['title']) ?>">
+                                            <img src="uploads/cover/<?= htmlspecialchars($book['cover']) ?>"
+                                                 alt="<?= htmlspecialchars($book['title']) ?>"
+                                                 loading="lazy"
+                                                 onerror="this.src='<?= $is_paper ? 'img/default-paper.png' : 'img/default-book.png' ?>'">
+                                        </a>
+                                        <div class="book-overlay">
+                                            <a href="book-detail.php?id=<?= $book['id'] ?>" class="btn btn-light btn-sm fw-semibold">
+                                                <i class="bi bi-eye"></i> View Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="book-info d-flex flex-column justify-content-between">
+                                        <div>
+                                            <span class="book-category <?= $is_paper ? 'research-paper-badge' : '' ?>">
+                                                <?= $is_paper ? 'Research Paper' : htmlspecialchars($current_category['name']) ?>
+                                            </span>
+                                            <h5 class="book-title">
+                                                <a href="book-detail.php?id=<?= $book['id'] ?>" class="book-card-link-title">
+                                                    <?= htmlspecialchars($book['title']) ?>
+                                                </a>
+                                            </h5>
+                                            <p class="book-author mb-3">
+                                                <i class="bi bi-person me-1"></i>
+                                                <?php if (!empty($book['author_id'])): ?>
+                                                    <a href="author.php?id=<?= $book['author_id'] ?>" class="text-secondary text-decoration-none action-button-layer">
+                                                        <?= htmlspecialchars($book_author ?: 'Tatvam Editorial') ?>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <?= htmlspecialchars($book_author ?: 'Tatvam Editorial') ?>
+                                                <?php endif; ?>
+                                            </p>
+                                        </div>
+                                        <div class="book-footer d-flex align-items-center justify-content-between pt-2 mt-auto border-top">
+                                            <div>
+                                                <span class="book-price fw-bold">
+                                                    <?= $book['price'] > 0 ? '₹' . number_format($book['price'], 2) : 'Free' ?>
+                                                </span>
+                                            </div>
+                                            <div class="action-button-layer">
+                                                <?php if ($book['price'] > 0): ?>
+                                                    <?php if (isset($_SESSION['user_id'], $_SESSION['user_type']) && $_SESSION['user_type'] == 'customer'): ?>
+                                                        <?php 
+                                                        if (!function_exists('is_in_cart')) { include_once "php/func-cart.php"; }
+                                                        if (is_in_cart($conn, $_SESSION['user_id'], $book['id'])): ?>
+                                                            <a href="cart.php" class="btn btn-sm btn-outline-secondary" style="font-size:12px;">
+                                                                <i class="bi bi-check2"></i> In Cart
+                                                            </a>
+                                                        <?php else: ?>
+                                                            <a href="php/add-to-cart.php?book_id=<?= $book['id'] ?>" class="btn btn-primary btn-sm" style="font-size:12px;" title="Add to Cart">
+                                                                <i class="bi bi-cart-plus me-1"></i> Add
+                                                            </a>
+                                                        <?php endif; ?>
+                                                    <?php else: ?>
+                                                        <a href="user-login.php" class="btn btn-primary btn-sm" style="font-size:12px;">
+                                                            <i class="bi bi-bag me-1"></i> Buy
+                                                        </a>
+                                                    <?php endif; ?>
+                                                <?php else: ?>
+                                                    <a href="book-detail.php?id=<?= $book['id'] ?>" class="btn btn-sm btn-outline-success" style="font-size:11.5px; font-weight:600;">
+                                                        <i class="bi bi-unlock me-1"></i> Free Access
+                                                    </a>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</section>
 
-		<div class="category">
-			<!-- List of categories -->
-			<div class="list-group">
-				<?php if ($categories == 0){
-					// do nothing
-				}else{ ?>
-				<a href="#"
-				   class="list-group-item list-group-item-action active">Category</a>
-				   <?php foreach ($categories as $category ) {?>
-				  
-				   <a href="category.php?id=<?=$category['id']?>"
-				      class="list-group-item list-group-item-action">
-				      <?=$category['name']?></a>
-				<?php } } ?>
-			</div>
+<?php include "php/footer.php"; ?>
 
-			<!-- List of authors -->
-			<div class="list-group mt-5">
-				<?php if ($authors == 0){
-					// do nothing
-				}else{ ?>
-				<a href="#"
-				   class="list-group-item list-group-item-action active">Author</a>
-				   <?php foreach ($authors as $author ) {?>
-				  
-				   <a href="author.php?id=<?=$author['id']?>"
-				      class="list-group-item list-group-item-action">
-				      <?=$author['name']?></a>
-				<?php } } ?>
-			</div>
-		</div>
-		</div>
-	</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
