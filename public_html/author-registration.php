@@ -21,23 +21,11 @@ if ($existing) {
 	<title>Author Registration - Tatvam Publication</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-light">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="index.php">
-                <i class="bi bi-book-half text-primary me-2"></i>
-                <span class="fw-bold">Tatvam <span class="text-primary">Publication</span></span>
-            </a>
-            <div class="ms-auto">
-                <a href="index.php" class="btn btn-outline-secondary btn-sm me-2">Home</a>
-                <a href="my-requests.php" class="btn btn-outline-secondary btn-sm me-2">My Requests</a>
-                <a href="user-profile.php" class="btn btn-outline-primary btn-sm">Profile</a>
-            </div>
-        </div>
-    </nav>
+<body style="background: var(--bg-light);">
+<?php $current_page = 'author-registration.php'; include "php/navbar.php"; ?>
 
     <div class="container py-5">
         <div class="row justify-content-center">

@@ -27,22 +27,11 @@ $categories = get_all_categories($conn);
     <title>Submit Book for Publishing - Tatvam Publication</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="index.php">
-                <i class="bi bi-book-half text-primary"></i>
-                <span class="brand-text">Tatvam <span class="text-primary">Publication</span></span>
-            </a>
-            <div class="ms-auto">
-                <a href="index.php" class="btn btn-outline-primary me-2"><i class="bi bi-house"></i> Home</a>
-                <a href="my-book-requests.php" class="btn btn-outline-secondary me-2"><i class="bi bi-list-ul"></i> My Requests</a>
-                <a href="user-profile.php" class="btn btn-outline-secondary"><i class="bi bi-person"></i> Profile</a>
-            </div>
-        </div>
-    </nav>
+<?php $current_page = 'submit-book.php'; include "php/navbar.php"; ?>
 
     <div class="container my-5">
         <div class="row justify-content-center">
